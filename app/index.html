@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>test</title>
+	</head>
+	<link href="./css/style.css" rel="stylesheet" type="text/css">
+	<body>
+    	<div id="content">
+			<div id="sidebar">
+				<ul>
+					<li class="header"><p>Clipboard Formated to <span></span></p></li>
+					<li class="stage_label">14 Days No Viewings</li>
+					<li class="stage_label">30 Days No Viewings</li>
+					<li class="stage_label">60 Days No Viewings</li>
+					<li class="stage_label">5 Viewings No Offers</li>
+					<li class="stage_label">5 Offers None Accepted</li>
+					<li class="stage_label">14-30 Days Not Live</li>
+					<li class="stage_label">30-60 Days Not Live</li>
+					<li class="stage_label">60+ Days Not Live</li>
+					<li class="stage_label">1 Month No Price Reduction</li>
+					<li class="stage_label">2+ Price Reductions</li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			let $ = require('jquery');
+			let {clipboard} = require('electron')
+			let csv = require('csv');
+			
+			Array.prototype.removeByIndex = function(index) {
+				this.splice(index, 1);
+			}
+
+			String.prototype.capitalise = function() {
+				return this.charAt(0).toUpperCase() + this.slice(1);
+			}
+
+			function csv_to_tsv (arr){
+				return arr.replace(/,/g, "\t")	
+			}
+
+			function no_viewings(arr) {
+				arr.forEach(function(a) {
+					var hero_link 	   = a[1]				
+					var listing_date   = a[2]
+					var first_pub_date = a[3]
+					var first_name = a[4];
+					var last_name  = a[5];
+					var email = a[6]
+					var mobile = a[7]
+					var landline = a[8]
+					var house_name = a[9]
+					var postcode = a[13];
+				
+					a.splice(0, a.length)					
+
+					a.push(first_name.capitalise() + " " + last_name.capitalise());
+					a.push(mobile.replace("+44", "0"))
+					a.push(landline.replace("+44", "0"))
+					a.push(email)
+					a.push(house_name)
+					a.push(postcode)
+					a.push(hero_link)
+					a.push(listing_date.slice(0, 10))
+					a.push(first_pub_date.slice(0, 10))
+				})	
+				return arr;
+			}
+
+			function no_offers(arr) {
+				arr.forEach(function(a) {
+					var hero_link 	   = a[1]				
+					var listing_date   = a[2]
+					var first_name = a[3];
+					var last_name  = a[4];
+					var email = a[5]
+					var mobile = a[6]
+					var landline = a[7]
+					var house_name = a[8]
+					var postcode = a[12];
+					var viewings = a[14];	
+					
+					a.splice(0, a.length)					
+
+					a.push(first_name.capitalise() + " " + last_name.capitalise());
+					a.push(mobile.replace("+44", "0"))
+					a.push(landline.replace("+44", "0"))
+					a.push(email)
+					a.push(house_name)
+					a.push(postcode)
+					a.push(hero_link)
+					a.push(listing_date.slice(0, 10))
+					a.push(viewings)
+				})	
+				return arr;
+			}
+
+			function some_offers(arr) {
+				arr.forEach(function(a) {
+					var hero_link 	   = a[1]				
+					var first_name = a[3];
+					var last_name  = a[4];
+					var email = a[5]
+					var mobile = a[6]
+					var landline = a[7]
+					var house_name = a[8]
+					var postcode = a[12];
+					var viewings = a[14];	
+					var offers = a[15]
+
+					a.splice(0, a.length)					
+
+					a.push(first_name.capitalise() + " " + last_name.capitalise());
+					a.push(mobile.replace("+44", "0"))
+					a.push(landline.replace("+44", "0"))
+					a.push(email)
+					a.push(house_name)
+					a.push(postcode)
+					a.push(hero_link)
+					a.push(viewings)
+					a.push(offers)
+				})	
+				return arr;
+			}
+
+			function not_live(arr) {
+				arr.forEach(function(a) {
+					var hero_link 	   = a[1]				
+					var listing_date   = a[2]
+					var first_name = a[3];
+					var last_name  = a[4];
+					var email = a[5]
+					var mobile = a[6]
+					var landline = a[7]
+					var house_name = a[8]
+					var postcode = a[12];
+
+					a.splice(0, a.length)					
+
+					a.push(first_name.capitalise() + " " + last_name.capitalise());
+					a.push(mobile.replace("+44", "0"))
+					a.push(landline.replace("+44", "0"))
+					a.push(email)
+					a.push(house_name)
+					a.push(postcode)
+					a.push(hero_link)
+					a.push(listing_date.slice(0, 10))
+				})	
+				return arr;
+			}
+
+			function price_red_one(arr) {
+				arr.forEach(function(a) {
+					var hero_link 	   = a[1]				
+					var listing_date   = a[2]
+					var first_pub_date = a[3]
+					var latest_price_change_date = a[4]; 
+					var first_name = a[5];
+					var last_name  = a[6];
+					var email = a[7]
+					var mobile = a[8]
+					var landline = a[9]
+					var current_price = a[10]
+					var previous_price = a[11]
+					var house_name = a[12]
+					var postcode = a[16];
+
+					a.splice(0, a.length)					
+
+					a.push(first_name.capitalise() + " " + last_name.capitalise());
+					a.push(mobile.replace("+44", "0"))
+					a.push(landline.replace("+44", "0"))
+					a.push(email)
+					a.push(house_name)
+					a.push(postcode)
+					a.push(hero_link)
+					a.push(listing_date.slice(0, 10))
+					a.push(first_pub_date.slice(0, 10))
+					a.push(latest_price_change_date.slice(0, 10))
+					a.push(previous_price)
+					a.push(current_price)
+				})	
+				return arr;
+			}
+
+			function price_red_two(arr) {
+				arr.forEach(function(a) {
+					var hero_link 	   = a[1]				
+					var listing_date   = a[2]
+					var first_pub_date = a[3]
+					var first_name = a[4];
+					var last_name  = a[5];
+					var email = a[6]
+					var mobile = a[7]
+					var landline = a[8]
+					var current_price = a[9]
+					var price_reds = a[10]
+					var house_name = a[11]
+					var postcode = a[15];
+
+					a.splice(0, a.length)					
+
+					a.push(first_name.capitalise() + " " + last_name.capitalise());
+					a.push(mobile.replace("+44", "0"))
+					a.push(landline.replace("+44", "0"))
+					a.push(email)
+					a.push(house_name)
+					a.push(postcode)
+					a.push(hero_link)
+					a.push(listing_date.slice(0, 10))
+					a.push(first_pub_date.slice(0, 10))
+					a.push(current_price)
+					a.push(price_reds)
+				})	
+				return arr;
+			}
+		
+
+			$(".stage_label").click(function() {
+				var clicked = $(this)
+				var t = $(this).text();
+				var raw = clipboard.readText();
+				clipboard.clear()
+				csv.parse(raw, {delimiter: "\t"}, function(err, out) {
+					switch(t) {
+						case "14 Days No Viewings": {
+							csv.stringify(no_viewings(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})
+						} break;
+						case "30 Days No Viewings": {
+							csv.stringify(no_viewings(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})
+						} break;
+						case "60 Days No Viewings": {
+							csv.stringify(no_viewings(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})	
+						} break;
+						case "5 Viewings No Offers": {
+							csv.stringify(no_offers(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})
+						} break;
+						case "5 Offers None Accepted": {
+							csv.stringify(some_offers(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})
+						} break;
+						case "14-30 Days Not Live": {
+							csv.stringify(not_live(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})
+						} break;
+						case "30-60 Days Not Live": {
+							csv.stringify(not_live(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})
+						} break;
+						case "60+ Days Not Live": {
+							csv.stringify(not_live(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})
+						} break;
+						case "1 Month No Price Reduction": {
+							csv.stringify(price_red_one(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})		
+						} break;
+						case "2+ Price Reductions": {
+							csv.stringify(price_red_two(out), function(err, out) {
+								clipboard.writeText(csv_to_tsv(out))
+							})		
+						} break;
+					}
+					$(".header > p > span").text(clicked.text())
+					$(".header > p").fadeIn(500).fadeOut(500);		
+				})					
+			})
+					
+		</script>
+	</body>
+</html>
